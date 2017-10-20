@@ -1,6 +1,35 @@
 ﻿@{
     ViewBag.Title = "首页";
 }
-
+<input type="button" id="btn" value="点击提交"/>
 
 这个是测试页面
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+<script>
+    
+
+
+    $(function() {
+
+        $("#btn").click(function() {
+
+
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "/Home/OptionMysql",
+                success: function (data) {
+                    //alert(data);
+                    
+                }
+
+
+            });
+
+        });
+
+    })
+
+
+</script>

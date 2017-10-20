@@ -16,12 +16,8 @@ namespace Transaction.Controllers
         //MySqlHelper
         public ActionResult Index()
         {
-            
-            MySqlConnection conn =
-                new MySqlConnection(
-                    "Database=xini2ng;Data Source=127.0.0.1;User Id=root;Password=root;pooling=false;CharSet=utf8");
-            MySqlTransaction tran= conn.BeginTransaction();
-            MySqlHelper.ExecuteNonQuery(tran, CommandType.Text,"");
+
+          
 
 
             return View();
@@ -39,6 +35,45 @@ namespace Transaction.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+
+
+
+        public JsonResult OptionMysql()
+        {
+
+            MySqlConnection conn =
+              new MySqlConnection(connectionString);
+            conn.Open();
+            MySqlTransaction tran = conn.BeginTransaction();
+            object obj = MySqlHelper.ExecuteScalar(connectionString, CommandType.Text, "SELECT  age FROM Test   WHERE id=2");
+            int age = Convert.ToInt32(obj) + 1;
+            int num1 = MySqlHelper.ExecuteNonQuery(tran, CommandType.Text, "INSERT INTO `ourtool`.`Test` ( `Name`, `CreateTime`, `Age`) VALUES ('梁朝伟', NOW(), 11) ;");
+            int num2 = MySqlHelper.ExecuteNonQuery(connectionString, CommandType.Text, "UPDATE  Test  SET  age="+ age + " WHERE id=2");
+
+            int num3 = MySqlHelper.ExecuteNonQuery(tran, CommandType.Text, "INSERT INTO `ourtool`.`Test` ( `Name`, `CreateTime`, `Age`) VALUES ('周润发', NOW(), 11) ;");
+
+
+            try
+            {
+                tran.Commit();
+                conn.Dispose();
+
+
+            }
+            catch (Exception ex)
+            {
+                tran.Rollback();
+                string msg = ex.Message;
+
+            }
+
+            JsonResult jsonResult=new JsonResult();
+            jsonResult.Data = string.Format("{0}-{1}-{2}-{3}",obj,num1,num2,num3);
+
+            return jsonResult;
+
         }
     }
 }
